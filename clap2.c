@@ -33,7 +33,7 @@ int cahaya = 1200;
 
 int clapCount = 0;  // Variabel untuk menghitung jumlah tepukan
 
-int lastSensorState = LOW;
+int sensorState = HIGH; // sensorState bydefault HIGH=mati
 
 char auth[] = "ZK6truArNyM7uNgm8FkmZYeF1VhgncCV";
 char ssid[] = "INKADE";
@@ -139,55 +139,37 @@ void loop() {
   Serial.println(ldrValue);
   Serial.println(reading);
 
-  // jika detek SENSOR SUARA
+  // jika detek SENSOR SUARA, cek clapCount dan update sensorState
   if (reading > 0) {
     clapCount++;
 
-    if (clapCount == 1) {
+    if (clapCount == 1) { 
       // Tepukkan satu kali untuk menyalakan lampu
-      digitalWrite(ledpin1, LOW);
-      display.setTextSize(1);
-      display.setTextColor(WHITE);
-      display.setCursor(4, 10);
-      display.println("LAMPU 1 : HIDUP");
-      display.display();
-      file.println("lampu 1 : hidup");
-      Serial.println("Lampu dinyalakan");
-      lastSensorState = LOW // update lastSensorState
-    } else {
+      sensorState = LOW // update sensorState
+    } else { 
       // Tepukkan dua kali untuk mematikan lampu
-      digitalWrite(ledpin1, HIGH);
-      display.setTextSize(1);
-      display.setTextColor(WHITE);
-      display.setCursor(4, 10);
-      display.println("LAMPU 1 : MATI");
-      display.display();
-      file.println("lampu 1 : mati");
-      Serial.println("Lampu dimatikan");
+      sensorState = HIGH // update sensorState
       clapCount = 0;  // Reset hitungan
-      lastSensorState = HIGH // update lastSensorState
     }
-    // delay(1000);  // Tunggu beberapa saat sebelum mendeteksi tepukan berikutnya
   }
-  // delay(1000);  // Tunggu beberapa saat sebelum mendeteksi tepukan berikutnya
-  else { // kalau takda detek 
-    if(lastSensorState == LOW) {
-      digitalWrite(ledpin1, LOW);
-      display.setTextSize(1);
-      display.setTextColor(WHITE);
-      display.setCursor(4, 10);
-      display.println("LAMPU 1 : HIDUP");
-      display.display();
-      file.println("lampu 1 : hidup");
-    } else {
-      digitalWrite(ledpin1, HIGH);
-      display.setTextSize(1);
-      display.setTextColor(WHITE);
-      display.setCursor(4, 10);
-      display.println("LAMPU 1 : MATI");
-      display.display();
-      file.println("lampu 1 : mati");
-    }
+
+  // action untuk HIDUP/MATI
+  if(sensorState == LOW) {
+    digitalWrite(ledpin1, LOW);
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(4, 10);
+    display.println("LAMPU 1 : HIDUP");
+    display.display();
+    file.println("lampu 1 : hidup");
+  } else {
+    digitalWrite(ledpin1, HIGH);
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(4, 10);
+    display.println("LAMPU 1 : MATI");
+    display.display();
+    file.println("lampu 1 : mati");
   }
 
 
